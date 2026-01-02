@@ -1,27 +1,48 @@
-# Deep Learning Framework
+# ==================== 深度学习框架 ====================
+# torch: PyTorch深度学习框架，用于构建和训练神经网络模型，支持GPU加速
 torch>=2.0.0
+
+# tiktoken: OpenAI的分词器库，用于将文本转换为token，支持不同的编码方式
 tiktoken>=0.5.0
 
-# Numerical Computing
+# ==================== 数值计算 ====================
+# numpy: 数值计算库，提供高效的数组操作和数学函数，是其他库的基础
 numpy>=1.24.0
 
-# Visualization
+# ==================== 数据可视化 ====================
+# matplotlib: Python绘图库，用于创建静态、动态和交互式的2D图表
 matplotlib>=3.7.0
+
+# seaborn: 基于matplotlib的高级可视化库，提供美观的统计图表绘制
 seaborn>=0.12.0
 
-# Jupyter
+# ==================== Jupyter交互式开发环境 ====================
+# jupyter: Jupyter项目的元包，包含所有核心Jupyter组件和工具
 jupyter>=1.0.0
+
+# notebook: Jupyter Notebook服务器，提供基于Web的交互式计算环境
 notebook>=6.5.0
+
+# ipykernel: Jupyter的IPython内核，允许在Jupyter中执行Python代码并实现交互
 ipykernel>=6.20.0
 
-# Utilities
+# ==================== 实用工具库 ====================
+# tqdm: 进度条库，用于为循环和迭代显示进度，提升用户体验
 tqdm>=4.65.0
+
+# pandas: 数据分析和处理库，提供DataFrame结构用于高效的数据操作和分析
 pandas>=2.0.0
 
-# Optional: For faster training
+# ==================== 可选：加速训练（需要时取消注释）====================
+# scipy: 科学计算库，提供优化、统计、插值等高级数学函数
 # scipy>=1.10.0
+
+# scikit-learn: 机器学习库，提供分类、回归、聚类等算法和工具
 # scikit-learn>=1.2.0
 
-# Optional: For advanced features
+# ==================== 可选：高级功能（需要时取消注释）====================
+# tensorboard: TensorFlow/PyTorch的可视化工具，用于监控训练过程和性能指标
 # tensorboard>=2.13.0
+
+# wandb: Weights & Biases的实验跟踪平台，用于记录、可视化和比较机器学习实验
 # wandb>=0.15.0
