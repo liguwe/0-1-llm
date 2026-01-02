@@ -1,0 +1,475 @@
+# ================================
+# Git 忽略文件配置 (.gitignore)
+# ================================
+#
+# 这个文件指定了 Git 应该忽略的文件和目录
+# 这些文件通常包括：
+# 1. 系统生成的文件
+# 2. 依赖和构建产物
+# 3. 敏感信息（密钥、密码等）
+# 4. IDE 和编辑器配置
+# 5. 临时文件和日志
+#
+# 为什么需要 .gitignore？
+# - 保持仓库整洁，只提交源代码
+# - 避免提交敏感信息（API密钥、密码等）
+# - 减小仓库体积（二进制文件很大）
+# - 避免冲突（每个人的本地配置不同）
+# - 保护隐私（个人配置和数据）
+# ================================
+
+
+# ================================
+# 1. Python 相关
+# ================================
+
+# Python 编译的字节码文件
+# 为什么忽略：
+# - Python 会在运行时自动生成这些 .pyc 文件
+# - 它们是编译后的字节码，可以由 .py 文件重新生成
+# - 不同 Python 版本生成的 .pyc 可能不兼容
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python 分发/打包文件
+# 为什么忽略：
+# - 这些是构建/安装过程生成的临时文件
+# - 可以通过源代码重新生成
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.manifest
+*.spec
+
+# PyInstaller
+# 为什么忽略：
+# - PyInstaller 用于将 Python 打包成可执行文件
+# - 生成的文件很大，且可由源代码重新构建
+*.spec
+
+# 单元测试 / 覆盖率报告
+# 为什么忽略：
+# - 这些是测试运行的结果，不是源代码
+# - 每次运行测试都会重新生成
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# mypy 类型检查
+# 为什么忽略：
+# - mypy 会生成缓存目录
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre 类型检查
+.pyre/
+
+
+# ================================
+# 2. 虚拟环境（最重要！）
+# ================================
+
+# 虚拟环境目录
+# 为什么忽略：
+# - 虚拟环境包含大量第三方库，体积很大（几百MB）
+# - 不同操作系统需要不同的虚拟环境
+# - 可以通过 requirements.txt 重新安装
+# - 每个人的开发环境路径不同
+.venv/
+venv/
+ENV/
+env/
+.ENV/
+.env/
+virtualenv/
+virtualenvs/
+
+
+# ================================
+# 3. Jupyter Notebook
+# ================================
+
+# Jupyter Notebook 的检查点文件
+# 为什么忽略：
+# - Jupyter 会自动创建这些 .ipynb_checkpoints 目录
+# - 包含 notebook 的自动保存副本
+# - 是临时文件，不需要版本控制
+.ipynb_checkpoints/
+
+# Jupyter Notebook 的转换结果
+# 为什么忽略：
+# - 这些是从 .ipynb 转换而来的，可以重新生成
+*.ipynb.json
+*.ipynb.html
+
+
+# ================================
+# 4. 机器学习 / 深度学习相关
+# ================================
+
+# 训练好的模型权重文件
+# 为什么忽略：
+# - 模型文件通常非常大（几百MB到几GB甚至更大）
+# - 可以通过训练代码重新生成
+# - 不同训练轮次会产生不同权重
+# - 建议使用专门的模型仓库（如 Hugging Face）或云存储
+*.pth
+*.pt
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.bin
+*.safetensors
+
+# 模型检查点（checkpoint）
+# 为什么忽略：
+# - 训练过程中自动保存的中间结果
+# - 用于恢复训练，但不需要版本控制
+checkpoint*/
+checkpoint/
+checkpoints/
+runs/
+
+# TensorBoard 日志
+# 为什么忽略：
+# - TensorBoard 生成的日志文件，实时更新
+# - 包含训练的可视化数据
+# - 文件很大且不断变化
+events.out.tfevents.*
+
+# Weights & Biases (wandb)
+# 为什么忽略：
+# - wandb 会在本地存储训练日志和配置
+# - 这些数据已经上传到云端
+wandb/
+
+# 数据集文件
+# 为什么忽略：
+# - 数据集通常很大（几GB到几百GB）
+# - 可能包含敏感或版权数据
+# - 可以从原始来源重新下载
+# - 建议使用数据管理平台或云存储
+data/
+datasets/
+*.csv
+*.json
+*.parquet
+*.feather
+
+# 注意：如果你使用的是小型示例数据集
+# （如本书中的小数据集），可以选择不忽略
+
+
+# ================================
+# 5. IDE 和编辑器配置
+# ================================
+
+# VS Code
+# 为什么忽略：
+# - VS Code 的用户设置和配置
+# - 每个开发者的偏好不同
+# - 可以通过项目级 .vscode/settings.json 推荐配置
+.vscode/
+
+# JetBrains IDEs（PyCharm, IntelliJ 等）
+# 为什么忽略：
+# - IDE 的项目配置和缓存
+# - 包含个人工作区设置
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Sublime Text
+# 为什么忽略：
+# - Sublime Text 的项目配置
+.sublime-project
+.sublime-workspace
+
+# Vim
+# 为什么忽略：
+# - Vim 的临时交换文件和备份
+*.swp
+*.swo
+*~
+.*.sw*
+
+# Emacs
+# 为什么忽略：
+# - Emacs 的自动保存文件
+*\~
+\#*\#
+.\#*
+
+# macOS
+# 为什么忽略：
+# - macOS 在每个目录都会创建这些隐藏文件
+# - 存储文件夹的显示设置和位置信息
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS Thumbnails
+# 为什么忽略：
+# - macOS 为图片和文档生成的缩略图缓存
+._*
+
+# macOS Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+# 为什么忽略：
+# - Windows 的桌面配置文件
+# - 存储文件夹视图设置
+Desktop.ini
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Windows Installer files
+# 为什么忽略：
+# - Windows 安装程序生成的缓存
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+
+# ================================
+# 6. 敏感信息和配置
+# ================================
+
+# 环境变量文件
+# 为什么忽略：
+# - 包含 API 密钥、数据库密码、token 等敏感信息
+# - 绝对不能提交到 Git！
+# - 应该创建 .env.example 作为模板
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 密钥和证书
+# 为什么忽略：
+# - 私钥、证书、密码等绝密信息
+# - 泄露会导致严重的安全问题
+*.key
+*.pem
+*.cert
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+credentials.json
+
+# AWS 配置
+# 为什么忽略：
+# - AWS 的访问密钥和配置
+.aws/
+config.yml
+
+# Google Cloud 配置
+# 为什么忽略：
+# - GCP 的认证文件
+*.json.gpg
+gcloud-config.json
+
+
+# ================================
+# 7. 日志和临时文件
+# ================================
+
+# 日志文件
+# 为什么忽略：
+# - 应用程序运行时生成的日志
+# - 文件很大且不断变化
+# - 可以重新生成
+*.log
+logs/
+*.log.*
+
+# 操作系统生成的临时文件
+# 为什么忽略：
+# - 系统或应用的临时文件
+# - 通常在 /tmp 目录
+tmp/
+temp/
+*.tmp
+*.temp
+
+
+# ================================
+# 8. 数据库
+# ================================
+
+# SQLite 数据库文件
+# 为什么忽略：
+# - 本地开发使用的数据库
+# - 可能包含测试数据
+# - 可以重新生成
+*.sqlite
+*.sqlite3
+*.db
+
+# Redis 数据库
+# 为什么忽略：
+# - Redis 的持久化文件
+dump.rdb
+
+
+# ================================
+# 9. 文档和发布相关
+# ================================
+
+# Sphinx 文档生成
+# 为什么忽略：
+# - 自动生成的文档网站
+docs/_build/
+site/
+
+# LaTeX 临时文件
+# 为什么忽略：
+# - LaTeX 编译过程产生的中间文件
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
+
+# ================================
+# 10. 其他工具
+# ================================
+
+# PyCharm
+# 为什么忽略：
+# - PyCharm 的项目文件
+.idea/
+
+# Jupyter Notebook
+# 为什么忽略：
+# - notebook 的检查点文件
+.ipynb_checkpoints/
+
+# pytest
+# 为什么忽略：
+# - pytest 的缓存目录
+.pytest_cache/
+
+# mypy
+# 为什么忽略：
+# - mypy 的缓存目录
+.mypy_cache/
+
+# Ruff（Python linter）
+# 为什么忽略：
+# - Ruff 的缓存目录
+.ruff_cache/
+
+# Black（Python formatter）
+# 为什么忽略：
+# - Black 的日志文件
+.black_cache
+
+
+# ================================
+# 11. 项目特定的忽略
+# ================================
+
+# 训练过程中的临时文件
+# 为什么忽略：
+# - 训练过程中生成的检查点
+# - 可以通过重新训练恢复
+*.ckpt
+*.pt
+*.pth
+
+# 实验结果
+# 为什么忽略：
+# - 实验的输出结果
+# - 可以通过重新运行实验生成
+experiments/results/
+experiments/outputs/
+experiments/logs/
+
+# 预下载的数据
+# 为什么忽略：
+# - 大型数据集的缓存
+# - 可以重新下载
+.cache/
+downloads/
+
+
+# ================================
+# 特别说明：如何处理敏感配置
+# ================================
+
+# 如果你的项目需要环境变量或配置文件：
+#
+# 1. 创建一个 .env.example 文件（不含敏感信息）：
+#    ```
+#    OPENAI_API_KEY=your_api_key_here
+#    DATABASE_URL=your_database_url_here
+#    ```
+#
+# 2. 将 .env.example 提交到 Git：
+#    ```
+#    git add .env.example
+#    ```
+#
+# 3. 创建实际的 .env 文件（包含真实密钥）：
+#    ```
+#    cp .env.example .env
+#    # 然后编辑 .env 填入真实密钥
+#    ```
+#
+# 4. 确保 .env 在 .gitignore 中（已包含）
+#
+# 这样其他开发者可以参考 .env.example，
+# 但不会暴露你的真实密钥！
