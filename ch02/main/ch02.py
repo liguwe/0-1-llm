@@ -1,11 +1,8 @@
 # %% [markdown]
 # # 第二章：文本数据处理
 
-# %%
+# %% ① 环境检查，打印 PyTorch 和 tiktoken 的安装版本
 
-############################################################################
-# ① 环境检查，打印 PyTorch 和 tiktoken 的安装版本
-############################################################################
 
 # 从 importlib.metadata 模块导入 version 函数，用于查询已安装包的版本号
 from importlib.metadata import version
@@ -21,11 +18,7 @@ print("torch version:", version("torch"))
 
 # 打印 tiktoken 的安装版本，确保分词器库正确安装并识别版本
 print("tiktoken version:", version("tiktoken"))
-# %% 
-
-############################################################################
-# ② 为了训练大模型，选择短篇小说 The Verdict 作为分词文本
-############################################################################
+# %% ② 为了训练大模型，选择短篇小说 The Verdict 作为分词文本
 
 # 导入 os 模块，用于操作系统相关操作（如检查文件是否存在）
 import os
@@ -59,15 +52,84 @@ if not os.path.exists("the-verdict.txt"):
 
     # 以文本读取模式 "r" 打开文件，读取文本内容
     with open(file_path, "r", encoding="utf-8") as f: 
-        # 读取文件的全部内容并存储在 text 变量中
+        # 读取文件的全部内容并存储在 raw_text 变量中
         # 指定 encoding="utf-8" 确保正确处理 UTF-8 编码的文本
-        text = f.read()
+        raw_text = f.read()
     
     # 打印文本的前 1000 个字符，用于快速预览文件内容是否正确加载
-    print(text[:1000])
+    print(raw_text[:1000])
 else:
     # 如果文件已存在，则直接读取本地文件
     with open("the-verdict.txt", "r", encoding="utf-8") as f:
-        text = f.read()
+        raw_text = f.read()
     
+    # 打印文本的前 1000 个字符，用于快速预览文件内容是否正确加载
+    print(raw_text[:1000])
+    
+# %% ③ 使用正则表达式进行基础分词（Tokenization）
+
+import re  
+
+# 示例：使用简单文本演示分词效果
+sample_text = "Hello, do you like tea?"  
+sample_preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', sample_text)  
+# item.strip() - 去除字符串两端的空白字符（空格、制表符、换行符等）
+sample_preprocessed = [item.strip() for item in sample_preprocessed if item.strip()]  
+print("示例分词结果:", sample_preprocessed)  
+
+# %% ④ 打印小说文本的前 1000 个字符
+
+# 使用正则表达式对小说文本进行分词
+preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)
+preprocessed = [item.strip() for item in preprocessed if item.strip()]
+
+print("分词后的前 100 个 token:", preprocessed[:99])
+
+print("分词后的文本长度:", len(preprocessed))
+
+# %% ⑤ 建立词汇表，只是使用了部分数据，展示逻辑
+
+# 这里模拟一部分数据，展示逻辑
+preprocessed_part = ['I', 'HAD', 'always', 'thought', 'Jack', 'Gisburn', '...']
+
+# 1. 去重：使用 set 去掉重复单词
+# 2. 排序：使用 sorted 按字母顺序排列
+all_words_part = sorted(list(set(preprocessed_part)))
+
+# 3. 查看词汇表大小
+vocab_size_part = len(all_words_part)
+print("排序去重后的词汇表:", all_words_part)
+print("排序去重后的词汇表大小:", vocab_size_part)
+
+# 4. 创建字典：{单词: 整数ID}
+# 
+# 【字典推导式 + enumerate 详解】
+# 
+# enumerate() 函数：为可迭代对象添加索引计数器
+# enumerate(all_words_part) 会产生：
+#   (0, '...'), (1, 'Gisburn'), (2, 'HAD'), (3, 'I'), (4, 'Jack'), (5, 'always'), (6, 'thought')
+#   格式：(索引, 元素)
+# 
+# 字典推导式语法：{key: value for 变量 in 可迭代对象}
+# 
+# 执行过程示例：
+# for integer, token in enumerate(all_words_part):
+#     第1次循环: integer=0, token='...'   → 字典添加 {'...': 0}
+#     第2次循环: integer=1, token='Gisburn' → 字典添加 {'Gisburn': 1}
+#     第3次循环: integer=2, token='HAD'   → 字典添加 {'HAD': 2}
+#     ...依此类推
+# 
+# 注意：这里故意将 key 和 value 对调了！
+# - 正常 enumerate: (integer, token) → integer 是索引，token 是值
+# - 字典中写成: {token: integer} → token 作为 key，integer 作为 value
+# 
+# 最终结果：{'...': 0, 'Gisburn': 1, 'HAD': 2, 'I': 3, 'Jack': 4, 'always': 5, 'thought': 6}
+vocab_part = {token: integer for integer, token in enumerate(all_words_part)}
+
+
+# 打印前 5 个看看长什么样
+for i, item in enumerate(vocab_part.items()):
+    print(item)
+    if i >= 5:
+        break
 # %%
