@@ -39,8 +39,8 @@ def tokenize(raw_text: str) -> List[str]:
 
     # 打印前 50 个 tokens，每行 10 个
     for i in range(0, min(50, len(tokens)), 10):
-        batch = tokens[i:i+10]
-        print(f"    [{i:3d}-{i+len(batch)-1:3d}] {batch}")
+        batch = tokens[i : i + 10]
+        print(f"    [{i:3d}-{i + len(batch) - 1:3d}] {batch}")
 
     return tokens
 

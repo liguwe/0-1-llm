@@ -3,7 +3,7 @@
 功能: 从 tokens 创建词汇表映射
 """
 
-from typing import List, Dict
+from typing import Dict, List
 
 
 def create_vocab(tokens: List[str]) -> Dict[str, int]:
