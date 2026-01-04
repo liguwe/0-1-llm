@@ -102,28 +102,6 @@ print("排序去重后的词汇表:", all_words_part)
 print("排序去重后的词汇表大小:", vocab_size_part)
 
 # 4. 创建字典：{单词: 整数ID}
-# 
-# 【字典推导式 + enumerate 详解】
-# 
-# enumerate() 函数：为可迭代对象添加索引计数器
-# enumerate(all_words_part) 会产生：
-#   (0, '...'), (1, 'Gisburn'), (2, 'HAD'), (3, 'I'), (4, 'Jack'), (5, 'always'), (6, 'thought')
-#   格式：(索引, 元素)
-# 
-# 字典推导式语法：{key: value for 变量 in 可迭代对象}
-# 
-# 执行过程示例：
-# for integer, token in enumerate(all_words_part):
-#     第1次循环: integer=0, token='...'   → 字典添加 {'...': 0}
-#     第2次循环: integer=1, token='Gisburn' → 字典添加 {'Gisburn': 1}
-#     第3次循环: integer=2, token='HAD'   → 字典添加 {'HAD': 2}
-#     ...依此类推
-# 
-# 注意：这里故意将 key 和 value 对调了！
-# - 正常 enumerate: (integer, token) → integer 是索引，token 是值
-# - 字典中写成: {token: integer} → token 作为 key，integer 作为 value
-# 
-# 最终结果：{'...': 0, 'Gisburn': 1, 'HAD': 2, 'I': 3, 'Jack': 4, 'always': 5, 'thought': 6}
 vocab_part = {token: integer for integer, token in enumerate(all_words_part)}
 
 
@@ -132,4 +110,135 @@ for i, item in enumerate(vocab_part.items()):
     print(item)
     if i >= 5:
         break
+# %% 分词器 SimpleTokenizerV1 
+
+# 导入正则表达式模块，用于文本分割和替换操作
+import re
+
+# SimpleTokenizerV1: 简单的文本分词器（第一版）
+# 功能：将文本转换为整数 ID 序列（编码），以及将整数 ID 序列还原为文本（解码）
+# 这是构建大语言模型（LLM）的基础组件之一
+class SimpleTokenizerV1:
+    """
+    简单分词器 V1 版本
+    - 基于预定义的词汇表（vocab）进行编码和解码
+    - 使用正则表达式进行文本预处理和分词
+    """
+    
+    def __init__(self, vocab):
+        """
+        初始化分词器
+        
+        参数:
+            vocab (dict): 词汇表字典，格式为 {token_string: token_id}
+                         例如: {"hello": 0, "world": 1, ",": 2}
+        
+        属性:
+            self.str_to_int: 字符串到整数的映射（编码用）
+            self.int_to_str: 整数到字符串的映射（解码用）
+        """
+        # 保存原始词汇表：字符串 -> 整数 ID
+        self.str_to_int = vocab
+        
+        # 创建反向映射：整数 ID -> 字符串
+        # 使用字典推导式，将 vocab 的键值对反转
+        # 例如: {"hello": 0, "world": 1} -> {0: "hello", 1: "world"}
+        self.int_to_str = {i:s for s,i in vocab.items()}
+        
+    def encode(self, text):
+        """
+        编码方法：将文本转换为整数 ID 序列
+        
+        参数:
+            text (str): 待编码的文本字符串
+        
+        返回:
+            list[int]: 整数 ID 列表
+        
+        处理流程:
+            1. 使用正则表达式分割文本
+            2. 去除空白项
+            3. 将每个 token 映射为对应的整数 ID
+        """
+        # 使用正则表达式分割文本
+        # 模式说明:
+        # - r'(...)': 原始字符串 + 捕获组，保留分隔符
+        # - [,.:;?_!"()\']:  匹配常见标点符号
+        # - |--:            匹配双连字符
+        # - |\s:            匹配任意空白字符（空格、制表符、换行符等）
+        preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', text)
+
+        # 清理分词结果：
+        # - item.strip(): 去除每个 token 两端的空白字符
+        # - if item.strip(): 过滤掉空字符串（只包含空白的项）
+        # 使用列表推导式简洁地完成过滤和清理
+        preprocessed = [
+            item.strip() for item in preprocessed if item.strip()
+        ]
+
+        # 将清理后的 token 转换为词汇表中的整数 ID
+        # 如果 token 不在词汇表中，这里会报 KeyError (V1 版本暂不处理未知单词)
+        ids = [self.str_to_int[token] for token in preprocessed]
+        return ids
+        
+    def decode(self, ids):
+        """
+        解码方法：将整数 ID 序列还原为文本
+        
+        参数:
+            ids (list[int]): 整数 ID 列表
+        
+        返回:
+            str: 解码后的文本字符串
+        
+        处理流程:
+            1. 将每个整数 ID 映射回对应的字符串 token
+            2. 用空格连接所有 token
+            3. 使用正则表达式去除标点符号前的多余空格
+        """
+        # 将整数 ID 列表转换为字符串列表，然后用空格连接
+        # 例如: [0, 1, 2] -> ["hello", "world", ","] -> "hello world ,"
+        # 对比 JavaScript → ["hello", "world", ","].join(" ")
+
+        # 列表推导式，对比 JavaScript，如下
+        # 对比 const text = ids.map(i => self.int_to_str[i]).join(" ");
+
+        # 用于从一个可迭代对象（如列表）创建另一个新列表
+        text = ' '.join([self.int_to_str[i] for i in ids])
+
+        # 去除标点符号前的多余空格
+        # 正则表达式说明:
+        # - r'\s+([,.:;?_!"()\'])': 匹配"一个或多个空白字符 + 标点符号"
+        # - r'\1': 替换为第一个捕获组（即标点符号本身），去掉前面的空格
+        # 例如: "hello , world !" -> "hello, world!"
+        # 对比 JavaScript → text.replace(/\s+([,.:;?_!"()\'])/g, "$1");
+        # 三个参数说明
+        # - r'\s+([,.:;?_!"()\'])': 匹配模式
+        # - r'\1': 需要替换为的模式，\1 表示第一个捕获组, 'r' 代表原始字符串
+        # - text: 输入字符串，即目标字符串
+        text = re.sub(r'\s+([,.:;?_!"()\'])', r'\1', text)
+        return text 
+
+
+# %% ⑥ 测试分词器
+
+# 确保 preprocessed 变量已定义（防止在交互式模式下漏跑之前的 Cell）
+if "preprocessed" not in locals():
+    # 如果没跑之前的代码，这里重新简单处理一下 raw_text
+    # 假设 raw_text 在前面的 Cell 里已经读取成功
+    preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)
+    preprocessed = [item.strip() for item in preprocessed if item.strip()]
+
+all_words = sorted(list(set(preprocessed)))
+vocab = {token: integer for integer, token in enumerate(all_words)}
+tokenizer = SimpleTokenizerV1(vocab)
+
+test_text = """It's the last he painted, you know," Mrs. Gisburn said with pardonable pride."""
+ids = tokenizer.encode(test_text)
+print('ids:', ids)
+
+decoded_text = tokenizer.decode(ids)
+print('text:', decoded_text)
+
 # %%
+
